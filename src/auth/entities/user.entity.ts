@@ -1,10 +1,4 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  ObjectID,
-  ObjectIdColumn,
-} from 'typeorm';
+import { Column, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
 
 @Entity()
 export class User {
