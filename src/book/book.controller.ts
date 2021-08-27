@@ -16,4 +16,9 @@ export class BookController {
   getBook(@Param('bookId') bookId: string): Promise<Book> {
     return this.bookService.getBook(bookId);
   }
+
+  @Get()
+  getBooks(): Promise<Book[]> {
+    return this.bookService.getBooks();
+  }
 }

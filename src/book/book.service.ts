@@ -30,4 +30,8 @@ export class BookService {
     }
     return book;
   }
+
+  getBooks(): Promise<Book[]> {
+    return this.bookRepository.find();
+  }
 }
