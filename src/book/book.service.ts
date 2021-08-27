@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBookDto } from './dtos/create-book.dto';
+import { ObjectID } from 'mongodb';
 import { Book } from './entities/book.entity';
 
 @Injectable()
@@ -15,7 +20,11 @@ export class BookService {
   }
 
   async getBook(bookId: string): Promise<Book> {
-    const book = this.bookRepository.findOne(bookId);
+    if (!ObjectID.isValid(bookId)) {
+      throw new NotFoundException(`Book with ID:${bookId} not found`);
+    }
+    const book = await this.bookRepository.findOne(bookId);
+    console.log(book);
     if (!book) {
       throw new NotFoundException(`Book with ID:${bookId} not found`);
     }
