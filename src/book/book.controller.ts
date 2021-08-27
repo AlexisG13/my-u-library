@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Rental } from 'src/rental/entities/rental.entity';
@@ -11,6 +12,7 @@ import { Book } from './entities/book.entity';
 export class BookController {
   constructor(private bookService: BookService) {}
 
+  @ApiBearerAuth()
   @Post()
   @UseGuards(AuthGuard(), RolesGuard)
   @Roles(['librarian'])
@@ -28,6 +30,7 @@ export class BookController {
     return this.bookService.getBooks();
   }
 
+  @ApiBearerAuth()
   @Get(':bookId/rental')
   @UseGuards(AuthGuard(), RolesGuard)
   @Roles(['librarian'])

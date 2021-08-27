@@ -1,5 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { Roles } from './decorators/roles.decorator';
 import { AuthCredentialsDto } from './dtos/auth-credentials.dto';
@@ -11,6 +12,7 @@ import { RolesGuard } from './guards/roles.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiBearerAuth()
   @Post('/user')
   @UseGuards(AuthGuard(), RolesGuard)
   @Roles(['librarian'])
