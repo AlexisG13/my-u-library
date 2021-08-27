@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { AddRentalDto } from './dtos/add-rental.dto';
 import { Rental } from './entities/rental.entity';
 import { ObjectID } from 'mongodb';
+import { getManager } from 'typeorm';
 
 @Injectable()
 export class RentalService {
@@ -16,17 +17,22 @@ export class RentalService {
 
   async addRental({ bookId }: AddRentalDto, user: User): Promise<Rental> {
     const book = await this.bookService.getBook(bookId);
-    const updatedBook = await this.bookService.removeStock(book);
+    book.stock -= 1;
     const devolutionDate = new Date();
     //Devolution date is set 3 weeks after rental date
     devolutionDate.setDate(devolutionDate.getDate() + 21);
-    return this.rentalRepository.save({
-      book: updatedBook,
+    const newRental = {
+      book,
       devolutionDate,
       rentalDate: new Date(),
       state: 'OPEN',
       userId: user._id,
+    };
+    await getManager().transaction(async (transactionalEntityManager) => {
+      transactionalEntityManager.save(book);
+      transactionalEntityManager.save(Rental, newRental);
     });
+    return this.rentalRepository.findOne({ where: newRental });
   }
 
   async getUserRentals(user: User): Promise<Rental[]> {
@@ -41,8 +47,12 @@ export class RentalService {
     if (!rental) {
       throw new NotFoundException(`A rental with ID:${rentalId} not found`);
     }
-    this.bookService.addStock(rental.book);
     rental.state = 'CLOSED';
-    return this.rentalRepository.save(rental);
+    rental.book.stock -= 1;
+    await getManager().transaction(async (transactionalEntityManager) => {
+      transactionalEntityManager.save(rental.book);
+      transactionalEntityManager.save(rental);
+    });
+    return rental;
   }
 }
