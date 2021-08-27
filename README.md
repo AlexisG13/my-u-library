@@ -35,6 +35,14 @@ Certain endpoints can only be accesed by authenticated users and/or with certain
 ```
 /auth/sign-in
 ```
+A user with the role "librarian" is already created with the credentials: 
+```
+{
+  "email": "librarian@gmail.com",
+  "password": "secret"
+}
+
+```
 After retrieving the token you should add it in the "Authorize" button on the Swagger interface
 
 
