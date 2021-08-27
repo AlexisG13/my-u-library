@@ -16,4 +16,7 @@ export class Book {
 
   @Column()
   genre: string;
+
+  @Column()
+  stock: number;
 }
