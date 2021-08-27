@@ -36,19 +36,6 @@ export class BookService {
     return this.bookRepository.find();
   }
 
-  removeStock(book: Book): Promise<Book> {
-    if (book.stock < 1) {
-      throw new BadRequestException('No book stock available');
-    }
-    book.stock -= 1;
-    return this.bookRepository.save(book);
-  }
-
-  addStock(book: Book): Promise<Book> {
-    book.stock += 1;
-    return this.bookRepository.save(book);
-  }
-
   async getBookRentals(bookId: string): Promise<Rental[]> {
     const book = await this.getBook(bookId);
     return this.rentalRepository.find({ where: { book } });
